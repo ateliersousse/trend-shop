@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrendShop Tunisie · AliExpress & Amazon</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body { background: #f0f2f5; padding: 1rem; }
+        .container { max-width: 1500px; margin: 0 auto; }
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, #0b1a33, #1a2f4e);
+            color: white;
+            padding: 1.2rem 2rem;
+            border-radius: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        .logo { font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .logo span { background: #f9b81b; color: #0b1a33; padding: 0.2rem 1rem; border-radius: 40px; font-size: 0.9rem; }
+        .search-wrapper {
+            display: flex;
+            flex: 2;
+            min-width: 250px;
+            background: white;
+            border-radius: 60px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .search-wrapper input {
+            flex: 1;
+            padding: 0.9rem 1.5rem;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            min-width: 150px;
+        }
+        .search-wrapper button {
+            background: #f9b81b;
+            border: none;
+            padding: 0.9rem 1.8rem;
+            font-weight: 700;
+            color: #0b1a33;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .search-wrapper button:hover { background: #f0a500; }
+        .header-actions { display: flex; gap: 1.2rem; align-items: center; }
+        .header-actions .badge { background: #e63946; padding: 0.3rem 1rem; border-radius: 40px; font-size: 0.8rem; }
+        .header-actions .wallet { background: #2ecc71; padding: 0.3rem 1rem; border-radius: 40px; font-size: 0.8rem; color: #0b1a33; font-weight: 600; }
+
+        /* PRODUCT GRID */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.8rem;
+            margin: 2rem 0;
+        }
+        .product-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #eef2f7;
+            position: relative;
+        }
+        .product-card:hover { transform: translateY(-6px); box-shadow: 0 15px 35px rgba(0,0,0,0.08); }
+        .product-media {
+            position: relative;
+            background: #f4f6fa;
+            height: 200px;
+            overflow: hidden;
+        }
+        .product-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .product-media .video-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .product-media .video-overlay i {
+            font-size: 3.5rem;
+            color: white;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            opacity: 0.9;
+        }
+        .product-media .video-overlay:hover i { transform: scale(1.1); }
+        .product-media video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+        .product-info {
+            padding: 1rem 1.2rem 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .product-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.2rem;
+            color: #0b1a33;
+        }
+        .product-desc {
+            color: #4a5a72;
+            font-size: 0.85rem;
+            margin-bottom: 0.7rem;
+            flex: 1;
+        }
+        .price-row {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 0.5rem 0;
+        }
+        .price-original { text-decoration: line-through; color: #8f9bb3; font-size: 0.85rem; }
+        .price-discount { background: #e63946; color: white; padding: 0.1rem 0.7rem; border-radius: 40px; font-size: 0.7rem; font-weight: 700; }
+        .price-current { font-size: 1.4rem; font-weight: 700; color: #0b1a33; }
+        .btn-buy {
+            background: #0b1a33;
+            color: white;
+            border: none;
+            padding: 0.7rem 0.5rem;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-buy:hover { background: #1f3a5f; transform: scale(0.97); }
+
+        /* LOAD MORE */
+        .load-more-wrapper {
+            text-align: center;
+            margin: 2rem 0;
+        }
+        .btn-load {
+            background: #0b1a33;
+            color: white;
+            border: none;
+            padding: 0.9rem 2.5rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .btn-load:hover { background: #1f3a5f; transform: scale(1.02); }
+        .btn-load:disabled { opacity: 0.5; cursor: default; }
+
+        /* EXTERNAL SEARCH (AliExpress & Amazon) */
+        .external-search {
+            background: white;
+            border-radius: 30px;
+            padding: 1.5rem 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .external-search h3 {
+            margin-bottom: 0.8rem;
+            color: #0b1a33;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .external-search .flex-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+        .external-search input {
+            flex: 2;
+            padding: 0.8rem 1.2rem;
+            border-radius: 60px;
+            border: 1px solid #dce2ec;
+            font-size: 1rem;
+            min-width: 200px;
+        }
+        .btn-aliexpress {
+            background: #FF6A00;
+            border: none;
+            padding: 0.8rem 1.8rem;
+            border-radius: 60px;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-aliexpress:hover { background: #e55d00; transform: scale(1.02); }
+        .btn-amazon {
+            background: #232F3E;
+            border: none;
+            padding: 0.8rem 1.8rem;
+            border-radius: 60px;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-amazon:hover { background: #1a2532; transform: scale(1.02); }
+        .external-results {
+            margin-top: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .external-result-item {
+            background: #f8f9fc;
+            border-radius: 16px;
+            padding: 0.8rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border: 1px solid #eef2f7;
+            flex: 1 1 250px;
+        }
+        .external-result-item .price { font-weight: 700; color: #0b1a33; }
+        .external-result-item .source { font-size: 0.8rem; color: #4a5a72; }
+        .external-result-item .btn-add {
+            background: #2ecc71;
+            border: none;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #0b1a33;
+        }
+        .source-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.1rem 0.6rem;
+            border-radius: 30px;
+            background: #eef2f7;
+        }
+        .source-badge.ali { background: #FF6A00; color: white; }
+        .source-badge.amazon { background: #232F3E; color: white; }
+
+        /* PAYMENT / WALLET SECTION */
+        .payment-section {
+            background: white;
+            border-radius: 30px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid #eef2f7;
+        }
+        .payment-section h2 {
+            color: #0b1a33;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-info {
+            background: #f0f4fe;
+            padding: 1.2rem 1.8rem;
+            border-radius: 20px;
+            margin: 1rem 0;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 2rem;
+        }
+        .card-info .number {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #0b1a33;
+        }
+        .card-info .name { font-weight: 600; color: #1a2f4e; }
+        .btn-pay {
+            background: #2ecc71;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #0b1a33;
+        }
+        .btn-pay:hover { background: #27ae60; transform: scale(0.98); }
+
+        .hidden-product { display: none; }
+        .show { display: flex; }
+
+        @media (max-width: 700px) {
+            header { flex-direction: column; align-items: stretch; }
+            .search-wrapper { width: 100%; }
+            .external-search .flex-row { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- HEADER -->
+    <header>
+        <div class="logo">
+            🛒 TrendShop.tn <span>AutoRebel</span>
+        </div>
+        <div class="search-wrapper">
+            <input type="text" id="searchInput" placeholder="Rechercher dans mon catalogue...">
+            <button id="searchBtn"><i class="fas fa-search"></i> Filtrer</button>
+        </div>
+        <div class="header-actions">
+            <span class="badge"><i class="fas fa-fire"></i> Trends</span>
+            <span class="wallet"><i class="fas fa-wallet"></i> Visa ••••4724</span>
+        </div>
+    </header>
+
+    <!-- EXTERNAL SEARCH (AliExpress & Amazon) -->
+    <div class="external-search">
+        <h3><i class="fas fa-globe"></i> Recherche directe sur les plateformes internationales</h3>
+        <div class="flex-row">
+            <input type="text" id="externalSearchInput" placeholder="Ex: Smartphone, Casque, Montre...">
+            <button class="btn-aliexpress" id="searchAliBtn"><i class="fab fa-alipay"></i> AliExpress</button>
+            <button class="btn-amazon" id="searchAmazonBtn"><i class="fab fa-amazon"></i> Amazon</button>
+        </div>
+        <div id="externalResults" class="external-results"></div>
+    </div>
+
+    <!-- PRODUCT GRID -->
+    <div id="productGrid" class="product-grid"></div>
+
+    <!-- LOAD MORE -->
+    <div class="load-more-wrapper">
+        <button class="btn-load" id="loadMoreBtn">Afficher plus de produits (100 cachés)</button>
+    </div>
+
+    <!-- PAYMENT / WALLET -->
+    <div class="payment-section">
+        <h2><i class="fas fa-credit-card"></i> Paiement direct & Wallet Visa</h2>
+        <div class="card-info">
+            <span><i class="fas fa-credit-card" style="font-size:2rem;"></i></span>
+            <span class="number">4937 2420 2001 4724</span>
+            <span class="name">Titulaire: Achref</span>
+        </div>
+        <p style="margin: 0.5rem 0 1rem; color: #2c3e50;">Paiement sécurisé par carte Visa. Toutes les transactions sont traitées instantanément.</p>
+        <button class="btn-pay" id="simulatePaymentBtn"><i class="fas fa-check-circle"></i> Simuler un paiement</button>
+        <div id="paymentLog" style="margin-top:1rem; background:#f8f9fc; padding:0.8rem 1.2rem; border-radius:20px; font-size:0.9rem;"></div>
+    </div>
+
+</div>
+
+<script>
+    (function() {
+        // ------------------------------------------------------------
+        // 1. GÉNÉRATION DE 250 PRODUITS (150 visibles, 100 cachés)
+        // ------------------------------------------------------------
+        const categories = ['Smartphone', 'Casque', 'Montre', 'Ordinateur', 'Tablette', 'Console', 'Enceinte', 'Caméra', 'Lampe', 'Sac', 'Accessoire', 'Écran', 'Clavier', 'Souris', 'Disque dur'];
+        const names = ['Pro', 'Max', 'Ultra', 'Lite', 'Plus', 'Air', 'Edge', 'Nova', 'Prime', 'Elite', 'Zen', 'Apex', 'Vibe', 'Pulse', 'Echo'];
+        const descs = ['Dernière technologie', 'Haute performance', 'Design élégant', 'Autonomie exceptionnelle', 'Résistant à l\'eau', 'Écran OLED', 'Charge rapide', 'Connectivité 5G', 'Son immersif', 'Léger et compact'];
+
+        function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+        function generateProducts(count) {
+            const products = [];
+            for (let i = 1; i <= count; i++) {
+                const cat = categories[randomInt(0, categories.length-1)];
+                const namePart = names[randomInt(0, names.length-1)];
+                const fullName = `${cat} ${namePart} ${i}`;
+                const desc = descs[randomInt(0, descs.length-1)];
+                const priceSite = randomInt(200, 5000);
+                const priceRebel = Math.round(priceSite * 0.8);
+                const profit = Math.round(priceSite * 0.2); // interne
+                const imgId = (i * 7 + 13) % 1000;
+                const imageUrl = `https://picsum.photos/seed/${imgId}/400/300`;
+                products.push({
+                    id: i,
+                    name: fullName,
+                    desc: desc,
+                    priceSite: priceSite,
+                    priceRebel: priceRebel,
+                    profit: profit,
+                    image: imageUrl,
+                    video: '',
+                    category: cat,
+                    source: 'Catalogue'
+                });
+            }
+            return products;
+        }
+
+        const allProducts = generateProducts(250);
+        const visibleCount = 150;
+        let currentVisible = visibleCount;
+
+        // ------------------------------------------------------------
+        // 2. RENDER PRODUCTS (sans afficher le profit)
+        // ------------------------------------------------------------
+        const grid = document.getElementById('productGrid');
+
+        function createProductCard(product, index) {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.dataset.index = index;
+
+            const media = document.createElement('div');
+            media.className = 'product-media';
+            const img = document.createElement('img');
+            img.src = product.image;
+            img.alt = product.name;
+            img.loading = 'lazy';
+            media.appendChild(img);
+            const overlay = document.createElement('div');
+            overlay.className = 'video-overlay';
+            overlay.innerHTML = '<i class="fas fa-play-circle"></i>';
+            overlay.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const existingVideo = media.querySelector('video');
+                if (existingVideo) {
+                    if (existingVideo.style.display === 'block') {
+                        existingVideo.style.display = 'none';
+                        overlay.style.display = 'flex';
+                    } else {
+                        existingVideo.style.display = 'block';
+                        overlay.style.display = 'none';
+                        existingVideo.play();
+                    }
+                    return;
+                }
+                const video = document.createElement('video');
+                video.src = 'https://www.w3schools.com/html/mov_bbb.mp4';
+                video.muted = true;
+                video.autoplay = true;
+                video.loop = false;
+                video.style.display = 'block';
+                video.style.width = '100%';
+                video.style.height = '100%';
+                video.style.objectFit = 'cover';
+                video.addEventListener('ended', function() {
+                    video.style.display = 'none';
+                    overlay.style.display = 'flex';
+                });
+                media.appendChild(video);
+                overlay.style.display = 'none';
+                video.play();
+            });
+            media.appendChild(overlay);
+            card.appendChild(media);
+
+            const info = document.createElement('div');
+            info.className = 'product-info';
+            const title = document.createElement('div');
+            title.className = 'product-title';
+            title.textContent = product.name;
+            info.appendChild(title);
+
+            const desc = document.createElement('div');
+            desc.className = 'product-desc';
+            desc.textContent = product.desc;
+            info.appendChild(desc);
+
+            const priceRow = document.createElement('div');
+            priceRow.className = 'price-row';
+            const orig = document.createElement('span');
+            orig.className = 'price-original';
+            orig.textContent = `${product.priceSite} DT`;
+            priceRow.appendChild(orig);
+            const disc = document.createElement('span');
+            disc.className = 'price-discount';
+            disc.textContent = '-20%';
+            priceRow.appendChild(disc);
+            const curr = document.createElement('span');
+            curr.className = 'price-current';
+            curr.textContent = `${product.priceRebel} DT`;
+            priceRow.appendChild(curr);
+            info.appendChild(priceRow);
+
+            const buyBtn = document.createElement('button');
+            buyBtn.className = 'btn-buy';
+            buyBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Acheter (paiement direct)';
+            buyBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                alert(`🛒 Achat de ${product.name} - ${product.priceRebel} DT`);
+                document.getElementById('paymentLog').innerHTML = `✅ Dernier achat: ${product.name} - ${product.priceRebel} DT`;
+            });
+            info.appendChild(buyBtn);
+            card.appendChild(info);
+            return card;
+        }
+
+        function renderProducts() {
+            grid.innerHTML = '';
+            allProducts.forEach((p, index) => {
+                const isHidden = index >= currentVisible;
+                const card = createProductCard(p, index);
+                if (isHidden) card.classList.add('hidden-product');
+                grid.appendChild(card);
+            });
+            updateLoadMoreButton();
+        }
+
+        // ------------------------------------------------------------
+        // 3. LOAD MORE
+        // ------------------------------------------------------------
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+        function updateLoadMoreButton() {
+            const hidden = allProducts.length - currentVisible;
+            if (hidden <= 0) {
+                loadMoreBtn.disabled = true;
+                loadMoreBtn.textContent = 'Tous les produits sont affichés';
+            } else {
+                loadMoreBtn.disabled = false;
+                loadMoreBtn.textContent = `Afficher ${Math.min(50, hidden)} produits supplémentaires (${hidden} restants)`;
+            }
+        }
+
+        loadMoreBtn.addEventListener('click', function() {
+            const toReveal = Math.min(50, allProducts.length - currentVisible);
+            if (toReveal <= 0) return;
+            const start = currentVisible;
+            const end = currentVisible + toReveal;
+            for (let i = start; i < end; i++) {
+                const card = grid.children[i];
+                if (card) card.classList.remove('hidden-product');
+            }
+            currentVisible = end;
+            updateLoadMoreButton();
+        });
+
+        // ------------------------------------------------------------
+        // 4. SEARCH interne
+        // ------------------------------------------------------------
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+
+        function filterProducts(query) {
+            query = query.toLowerCase().trim();
+            const cards = grid.querySelectorAll('.product-card');
+            cards.forEach((card, idx) => {
+                const product = allProducts[idx];
+                if (!product) return;
+                const match = product.name.toLowerCase().includes(query) || product.desc.toLowerCase().includes(query) || product.category.toLowerCase().includes(query);
+                if (query === '') {
+                    if (idx < currentVisible) card.classList.remove('hidden-product');
+                    else card.classList.add('hidden-product');
+                } else {
+                    if (match) card.classList.remove('hidden-product');
+                    else card.classList.add('hidden-product');
+                }
+            });
+        }
+
+        searchBtn.addEventListener('click', function() { filterProducts(searchInput.value); });
+        searchInput.addEventListener('keyup', function(e) { if (e.key === 'Enter') filterProducts(this.value); });
+
+        // ------------------------------------------------------------
+        // 5. EXTERNAL SEARCH (AliExpress & Amazon) - Profit caché
+        // ------------------------------------------------------------
+        const extInput = document.getElementById('externalSearchInput');
+        const searchAliBtn = document.getElementById('searchAliBtn');
+        const searchAmazonBtn = document.getElementById('searchAmazonBtn');
+        const extResults = document.getElementById('externalResults');
+
+        function searchExternal(source) {
+            const query = extInput.value.trim();
+            if (!query) { extResults.innerHTML = '<p>Veuillez entrer un produit à chercher.</p>'; return; }
+            extResults.innerHTML = `<p><i class="fas fa-spinner fa-spin"></i> Recherche sur ${source} en cours...</p>`;
+
+            setTimeout(() => {
+                // Simuler des résultats de prix
+                const count = randomInt(3, 6);
+                const results = [];
+                for (let i = 0; i < count; i++) {
+                    let basePrice = randomInt(150, 6000);
+                    // Petite variation selon la plateforme
+                    if (source === 'AliExpress') basePrice = Math.round(basePrice * (0.85 + Math.random() * 0.2));
+                    else if (source === 'Amazon') basePrice = Math.round(basePrice * (0.9 + Math.random() * 0.3));
+                    
+                    const price = Math.round(basePrice);
+                    const profit = Math.round(price * 0.2); // interne
+                    results.push({
+                        site: source,
+                        price: price,
+                        profit: profit,
+                        productName: `${query} - ${source} #${i+1}`,
+                        desc: `Provenant de ${source}`
+                    });
+                }
+                // Trier par prix
+                results.sort((a,b) => a.price - b.price);
+                extResults.innerHTML = '';
+                results.forEach((res) => {
+                    const div = document.createElement('div');
+                    div.className = 'external-result-item';
+                    const badgeClass = (source === 'AliExpress') ? 'ali' : 'amazon';
+                    div.innerHTML = `
+                        <div>
+                            <strong>${res.productName}</strong><br>
+                            <span class="price">${res.price} DT</span>
+                            <span class="source-badge ${badgeClass}">${res.site}</span>
+                        </div>
+                        <button class="btn-add" data-price="${res.price}" data-profit="${res.profit}" data-name="${res.productName}" data-desc="${res.desc}" data-source="${res.site}">Ajouter</button>
+                    `;
+                    extResults.appendChild(div);
+                    const btn = div.querySelector('.btn-add');
+                    btn.addEventListener('click', function() {
+                        const price = parseInt(this.dataset.price);
+                        const profit = parseInt(this.dataset.profit);
+                        const name = this.dataset.name;
+                        const desc = this.dataset.desc;
+                        const sourceName = this.dataset.source;
+                        
+                        const newProduct = {
+                            id: allProducts.length + 1,
+                            name: name,
+                            desc: desc + ' (Importé)',
+                            priceSite: price,
+                            priceRebel: Math.round(price * 0.8),
+                            profit: profit,
+                            image: `https://picsum.photos/seed/${Date.now() + allProducts.length + randomInt(1,999)}/400/300`,
+                            video: '',
+                            category: 'Importé',
+                            source: sourceName
+                        };
+                        allProducts.push(newProduct);
+                        currentVisible = allProducts.length; // Montre le nouveau produit immédiatement
+                        renderProducts();
+                        extResults.innerHTML = `<p>✅ Produit "${name}" ajouté avec succès depuis ${sourceName} !</p>`;
+                        updateLoadMoreButton();
+                        document.getElementById('paymentLog').innerHTML = `✅ Nouveau produit importé: ${name} - ${price} DT`;
+                    });
+                });
+            }, 900);
+        }
+
+        searchAliBtn.addEventListener('click', function() { searchExternal('AliExpress'); });
+        searchAmazonBtn.addEventListener('click', function() { searchExternal('Amazon'); });
+
+        // ------------------------------------------------------------
+        // 6. PAYMENT SIMULATION (sans bénéfice)
+        // ------------------------------------------------------------
+        document.getElementById('simulatePaymentBtn').addEventListener('click', function() {
+            const randomIndex = randomInt(0, allProducts.length - 1);
+            const prod = allProducts[randomIndex];
+            if (prod) {
+                const msg = `💳 Paiement simulé pour "${prod.name}" - ${prod.priceRebel} DT. Transaction confirmée.`;
+                document.getElementById('paymentLog').innerHTML = msg;
+                alert(msg);
+            }
+        });
+
+        // ------------------------------------------------------------
+        // 7. INIT
+        // ------------------------------------------------------------
+        renderProducts();
+        updateLoadMoreButton();
+    })();
+</script>
+
+</body>
+</html>
